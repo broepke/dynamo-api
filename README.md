@@ -20,6 +20,37 @@ export AWS_SECRET_ACCESS_KEY='your_secret_key'
 - Table Name: Items
 - Partition Key: id (String)
 
+## Add Sample Data
+
+Ensure that your CLI is configured with a user that has access to the Table created earlier (via the UI) and run the following in a terminal to add dummy data.
+
+```
+aws dynamodb put-item \
+    --table-name Items \
+    --item '{
+        "id": {"S": "1"},
+        "name": {"S": "Laptop"},
+        "description": {"S": "High-performance gaming laptop with RTX 3080"}
+    }' \
+    --region us-east-1 && \
+aws dynamodb put-item \
+    --table-name Items \
+    --item '{
+        "id": {"S": "2"},
+        "name": {"S": "Smartphone"},
+        "description": {"S": "Latest model with 5G capability"}
+    }' \
+    --region us-east-1 && \
+aws dynamodb put-item \
+    --table-name Items \
+    --item '{
+        "id": {"S": "3"},
+        "name": {"S": "Headphones"},
+        "description": {"S": "Wireless noise-cancelling headphones"}
+    }' \
+    --region us-east-1
+```
+
 ## API Endpoints
 
 ### Get all items
