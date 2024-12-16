@@ -32,6 +32,11 @@ GET /items
 GET /items/<item_id>
 ```
 
+### Get a specific property of an item
+```
+GET /items/<item_id>/<property_name>
+```
+
 ### Create a new item
 ```
 POST /items
@@ -86,6 +91,11 @@ curl http://localhost:5000/items
 Get a specific item:
 ```bash
 curl http://localhost:5000/items/1
+```
+
+Get a specific property of an item:
+```bash
+curl http://localhost:5000/items/1/name
 ```
 
 Update an item:

@@ -37,6 +37,21 @@ def get_item(item_id):
     except ClientError as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/items/<string:item_id>/<string:property_name>', methods=['GET'])
+def get_item_property(item_id, property_name):
+    try:
+        response = table.get_item(Key={'id': item_id})
+        item = response.get('Item')
+        if not item:
+            return jsonify({'error': 'Item not found'}), 404
+        
+        if property_name not in item:
+            return jsonify({'error': f"Property '{property_name}' not found"}), 404
+        
+        return jsonify({property_name: item[property_name]})
+    except ClientError as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/items', methods=['POST'])
 def create_item():
     try:
