@@ -20,7 +20,7 @@ logger.add(
     sys.stdout,
     colorize=True,
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-    level="INFO"
+    level="INFO",
 )
 
 # Add file logging with rotation
@@ -30,10 +30,11 @@ logger.add(
     retention="1 week",
     compression="zip",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
-    level="INFO"
+    level="INFO",
 )
 
 app = FastAPI()
+
 
 # Pydantic model for items
 class Item(BaseModel):
@@ -43,6 +44,7 @@ class Item(BaseModel):
 
     class Config:
         extra = "allow"  # Allows additional fields
+
 
 # DynamoDB client setup as a dependency
 def get_dynamodb():
@@ -59,6 +61,7 @@ def get_dynamodb():
         logger.exception("Failed to initialize DynamoDB connection")
         raise
 
+
 @app.get("/items", response_model=List[Dict[str, Any]])
 async def get_items(table: Any = Depends(get_dynamodb)):
     logger.info("Handling GET request for all items")
@@ -73,6 +76,7 @@ async def get_items(table: Any = Depends(get_dynamodb)):
     except Exception as e:
         logger.exception("Unexpected error while fetching items")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.get("/items/{item_id}")
 async def get_item(item_id: str, table: Any = Depends(get_dynamodb)):
@@ -94,11 +98,14 @@ async def get_item(item_id: str, table: Any = Depends(get_dynamodb)):
         logger.exception(f"Unexpected error while fetching item {item_id}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.get("/items/{item_id}/{property_name}")
 async def get_item_property(
     item_id: str, property_name: str, table: Any = Depends(get_dynamodb)
 ):
-    logger.info(f"Handling GET request for item ID: {item_id}, property: {property_name}")
+    logger.info(
+        f"Handling GET request for item ID: {item_id}, property: {property_name}"
+    )
     try:
         response = table.get_item(Key={"id": item_id})
         item = response.get("Item")
@@ -112,16 +119,23 @@ async def get_item_property(
                 status_code=404, detail=f"Property '{property_name}' not found"
             )
 
-        logger.success(f"Successfully retrieved property {property_name} for item {item_id}")
+        logger.success(
+            f"Successfully retrieved property {property_name} for item {item_id}"
+        )
         return {property_name: item[property_name]}
     except ClientError as e:
-        logger.exception(f"DynamoDB error while fetching property {property_name} for item {item_id}")
+        logger.exception(
+            f"DynamoDB error while fetching property {property_name} for item {item_id}"
+        )
         raise HTTPException(status_code=500, detail=str(e))
     except HTTPException:
         raise
     except Exception as e:
-        logger.exception(f"Unexpected error while fetching property {property_name} for item {item_id}")
+        logger.exception(
+            f"Unexpected error while fetching property {property_name} for item {item_id}"
+        )
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.post("/items", status_code=201)
 async def create_item(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
@@ -136,6 +150,7 @@ async def create_item(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
     except Exception as e:
         logger.exception("Unexpected error while creating item")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.put("/items/{item_id}")
 async def update_item(
@@ -154,6 +169,7 @@ async def update_item(
         logger.exception(f"Unexpected error while updating item {item_id}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.delete("/items/{item_id}", status_code=204)
 async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
     logger.info(f"Handling DELETE request for item ID: {item_id}")
@@ -168,8 +184,9 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
         logger.exception(f"Unexpected error while deleting item {item_id}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 if __name__ == "__main__":
     import uvicorn
-    
+
     logger.info("Starting Dynamo API server")
     uvicorn.run(app, host="127.0.0.1", port=8000)
