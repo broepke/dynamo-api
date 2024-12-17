@@ -26,6 +26,7 @@ Export your AWS credentials as environment variables:
 ```bash
 export AWS_ACCESS_KEY_ID='your_access_key'
 export AWS_SECRET_ACCESS_KEY='your_secret_key'
+export AWS_REGION='us-east-1'
 ```
 
 3. Create DynamoDB table:
@@ -172,3 +173,13 @@ curl -X DELETE http://127.0.0.1:8000/items/1
 ```
 
 Note: While these API endpoints are still available for direct use, it's recommended to use the Streamlit UI for easier data management. You can also explore the interactive API documentation at `/docs` or `/redoc` for a more detailed API reference.
+
+## Docker Build
+
+```bash
+docker build \
+  --build-arg AWS_ACCESS_KEY_ID=your_access_key \
+  --build-arg AWS_SECRET_ACCESS_KEY=your_secret_key \
+  --build-arg AWS_REGION=your_region \
+  -t dynamo-api .
+```
