@@ -58,7 +58,7 @@ def get_dynamodb():
         )
         return dynamodb.Table("Items")
     except Exception as e:
-        logger.exception("Failed to initialize DynamoDB connection")
+        logger.exception(f"Failed to initialize DynamoDB connection: {str(e)}")
         raise
 
 
@@ -71,10 +71,10 @@ async def get_items(table: Any = Depends(get_dynamodb)):
         logger.success(f"Successfully retrieved {len(items)} items")
         return items
     except ClientError as e:
-        logger.exception("DynamoDB error while fetching items")
+        logger.exception(f"DynamoDB error while fetching items: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.exception("Unexpected error while fetching items")
+        logger.exception(f"Unexpected error while fetching items: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -90,12 +90,12 @@ async def get_item(item_id: str, table: Any = Depends(get_dynamodb)):
         logger.success(f"Successfully retrieved item: {item_id}")
         return item
     except ClientError as e:
-        logger.exception(f"DynamoDB error while fetching item {item_id}")
+        logger.exception(f"DynamoDB error while fetching item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     except HTTPException:
         raise
     except Exception as e:
-        logger.exception(f"Unexpected error while fetching item {item_id}")
+        logger.exception(f"Unexpected error while fetching item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -125,14 +125,14 @@ async def get_item_property(
         return {property_name: item[property_name]}
     except ClientError as e:
         logger.exception(
-            f"DynamoDB error while fetching property {property_name} for item {item_id}"
+            f"DynamoDB error while fetching property {property_name} for item {item_id}: {str(e)}"
         )
         raise HTTPException(status_code=500, detail=str(e))
     except HTTPException:
         raise
     except Exception as e:
         logger.exception(
-            f"Unexpected error while fetching property {property_name} for item {item_id}"
+            f"Unexpected error while fetching property {property_name} for item {item_id}: {str(e)}"
         )
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -145,10 +145,10 @@ async def create_item(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
         logger.success(f"Successfully created item with ID: {item.get('id')}")
         return item
     except ClientError as e:
-        logger.exception("DynamoDB error while creating item")
+        logger.exception(f"DynamoDB error while creating item: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.exception("Unexpected error while creating item")
+        logger.exception(f"Unexpected error while creating item: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -163,10 +163,10 @@ async def update_item(
         logger.success(f"Successfully updated item: {item_id}")
         return item
     except ClientError as e:
-        logger.exception(f"DynamoDB error while updating item {item_id}")
+        logger.exception(f"DynamoDB error while updating item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.exception(f"Unexpected error while updating item {item_id}")
+        logger.exception(f"Unexpected error while updating item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -178,10 +178,10 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
         logger.success(f"Successfully deleted item: {item_id}")
         return None
     except ClientError as e:
-        logger.exception(f"DynamoDB error while deleting item {item_id}")
+        logger.exception(f"DynamoDB error while deleting item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.exception(f"Unexpected error while deleting item {item_id}")
+        logger.exception(f"Unexpected error while deleting item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
