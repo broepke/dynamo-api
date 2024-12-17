@@ -1,23 +1,22 @@
 import streamlit as st
-import boto3
 import pandas as pd
-from botocore.exceptions import ClientError
+import requests
 
 # Configure the page
 st.set_page_config(page_title="Items Dashboard", layout="wide")
 
 # Add title and description
 st.title("Items Dashboard")
-st.markdown("View and manage items from the DynamoDB database")
+st.markdown("View and manage items from the database")
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Items')
+# Configure API URL
+API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
 
-# Fetch items from DynamoDB
+# Fetch items from API
 try:
-    response = table.scan()
-    items = response.get('Items', [])
+    response = requests.get(f"{API_URL}/items")
+    response.raise_for_status()  # Raise an exception for bad status codes
+    items = response.json()
     
     if items:
         # Convert items to DataFrame
@@ -27,7 +26,7 @@ try:
     else:
         st.info("No items found in the database.")
         
-except ClientError as e:
-    st.error(f"Error accessing DynamoDB: {str(e)}")
+except requests.RequestException as e:
+    st.error(f"Error accessing API: {str(e)}")
 except Exception as e:
     st.error(f"An error occurred: {str(e)}")

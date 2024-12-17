@@ -1,22 +1,21 @@
 import streamlit as st
-import boto3
-from botocore.exceptions import ClientError
+import requests
 
 # Configure the page
 st.set_page_config(page_title="Edit Item", layout="wide")
 
 # Add title and description
 st.title("Edit Item")
-st.markdown("Edit an existing item in the DynamoDB database")
+st.markdown("Edit an existing item in the database")
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Items')
+# Configure API URL
+API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
 
 try:
-    # Scan DynamoDB table to get all items
-    response = table.scan()
-    items = response.get('Items', [])
+    # Get all items from API
+    response = requests.get(f"{API_URL}/items")
+    response.raise_for_status()
+    items = response.json()
     
     if not items:
         st.warning("No items found in the database.")
@@ -52,20 +51,21 @@ try:
                             'description': description
                         }
                         
-                        # Update item in DynamoDB
-                        table.put_item(Item=updated_item)
+                        # Update item using API
+                        response = requests.put(f"{API_URL}/items/{selected_item['id']}", json=updated_item)
+                        response.raise_for_status()
                         
                         st.success("Item updated successfully!")
                         
                         # Rerun the app to refresh the data
                         st.rerun()
                         
-                    except ClientError as e:
-                        st.error(f"Error updating item in DynamoDB: {str(e)}")
+                    except requests.RequestException as e:
+                        st.error(f"Error updating item: {str(e)}")
                     except Exception as e:
                         st.error(f"An error occurred: {str(e)}")
 
-except ClientError as e:
-    st.error(f"Error accessing DynamoDB: {str(e)}")
+except requests.RequestException as e:
+    st.error(f"Error accessing API: {str(e)}")
 except Exception as e:
     st.error(f"An error occurred: {str(e)}")

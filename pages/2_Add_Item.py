@@ -1,6 +1,5 @@
 import streamlit as st
-import boto3
-from botocore.exceptions import ClientError
+import requests
 import uuid
 
 # Configure the page
@@ -8,11 +7,10 @@ st.set_page_config(page_title="Add New Item", layout="wide")
 
 # Add title and description
 st.title("Add New Item")
-st.markdown("Add a new item to the DynamoDB database")
+st.markdown("Add a new item to the database")
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Items')
+# Configure API URL
+API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
 
 # Create a form for adding new items
 with st.form("add_item_form"):
@@ -35,15 +33,16 @@ with st.form("add_item_form"):
                 'description': description
             }
             
-            # Add item to DynamoDB
-            table.put_item(Item=item)
+            # Add item using API
+            response = requests.post(f"{API_URL}/items", json=item)
+            response.raise_for_status()
             
             st.success("Item added successfully!")
             
             # Clear the form by rerunning the app
             st.rerun()
             
-        except ClientError as e:
-            st.error(f"Error adding item to DynamoDB: {str(e)}")
+        except requests.RequestException as e:
+            st.error(f"Error adding item: {str(e)}")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
