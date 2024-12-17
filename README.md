@@ -1,6 +1,18 @@
-# Flask DynamoDB API
+# Flask DynamoDB API with Streamlit UI
 
-A RESTful API built with Flask that uses AWS DynamoDB as its backend database.
+A RESTful API built with Flask that uses AWS DynamoDB as its backend database, now featuring a Streamlit web interface for easy data management.
+
+## Project Structure
+
+```
+├── app.py              # Flask API server
+├── Home.py            # Streamlit main dashboard
+├── pages/             # Streamlit pages for CRUD operations
+│   ├── 1_Edit_Item.py
+│   ├── 2_Add_Item.py
+│   └── 3_Delete_Item.py
+└── requirements.txt   # Project dependencies
+```
 
 ## Setup
 
@@ -19,6 +31,29 @@ export AWS_SECRET_ACCESS_KEY='your_secret_key'
 3. Create DynamoDB table:
 - Table Name: Items
 - Partition Key: id (String)
+
+## Running the Application
+
+1. Start the Flask API server:
+```bash
+python app.py
+```
+The API will be available at `http://127.0.0.1:5000`
+
+2. Start the Streamlit UI (in a separate terminal):
+```bash
+streamlit run Home.py
+```
+The Streamlit interface will be available at `http://localhost:8501`
+
+## Streamlit UI Features
+
+The web interface provides an intuitive way to manage your items:
+
+- **Dashboard** (Home.py): View all items in a tabular format
+- **Edit Item**: Select and modify existing items
+- **Add Item**: Create new items with auto-generated UUIDs
+- **Delete Item**: Remove items with confirmation dialog
 
 ## Add Sample Data
 
@@ -96,46 +131,40 @@ Content-Type: application/json
 DELETE /items/<item_id>
 ```
 
-## Running the API
-
-Start the Flask development server:
-```bash
-python app.py
-```
-
-The API will be available at `http://localhost:5000`
-
-## Example Usage
+## Example API Usage
 
 Create an item:
 ```bash
-curl -X POST http://localhost:5000/items \
+curl -X POST http://127.0.0.1:5000/items \
   -H "Content-Type: application/json" \
   -d '{"id": "1", "name": "Test Item", "description": "This is a test item"}'
 ```
 
 Get all items:
 ```bash
-curl http://localhost:5000/items
+curl http://127.0.0.1:5000/items
 ```
 
 Get a specific item:
 ```bash
-curl http://localhost:5000/items/1
+curl http://127.0.0.1:5000/items/1
 ```
 
 Get a specific property of an item:
 ```bash
-curl http://localhost:5000/items/1/name
+curl http://127.0.0.1:5000/items/1/name
 ```
 
 Update an item:
 ```bash
-curl -X PUT http://localhost:5000/items/1 \
+curl -X PUT http://127.0.0.1:5000/items/1 \
   -H "Content-Type: application/json" \
   -d '{"name": "Updated Item", "description": "This is an updated item"}'
 ```
 
 Delete an item:
 ```bash
-curl -X DELETE http://localhost:5000/items/1
+curl -X DELETE http://127.0.0.1:5000/items/1
+```
+
+Note: While these API endpoints are still available for direct use, it's recommended to use the Streamlit UI for easier data management.
