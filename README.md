@@ -176,6 +176,8 @@ Note: While these API endpoints are still available for direct use, it's recomme
 
 ## Docker Build
 
+Do not deploy to production with this.
+
 ```bash
 docker build \
   --build-arg AWS_ACCESS_KEY_ID=your_access_key \
