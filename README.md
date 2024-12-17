@@ -1,11 +1,11 @@
-# Flask DynamoDB API with Streamlit UI
+# FastAPI DynamoDB API with Streamlit UI
 
-A RESTful API built with Flask that uses AWS DynamoDB as its backend database, now featuring a Streamlit web interface for easy data management.
+A RESTful API built with FastAPI that uses AWS DynamoDB as its backend database, featuring a Streamlit web interface for easy data management.
 
 ## Project Structure
 
 ```
-├── app.py                  # Flask API server
+├── app.py                  # FastAPI server
 ├── Home.py                 # Streamlit main dashboard
 ├── pages/                  # Streamlit pages for CRUD operations
 │   ├── 1_Edit_Item.py
@@ -34,11 +34,15 @@ export AWS_SECRET_ACCESS_KEY='your_secret_key'
 
 ## Running the Application
 
-1. Start the Flask API server:
+1. Start the FastAPI server:
 ```bash
-python app.py
+uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 The API will be available at `http://127.0.0.1:8000`
+
+API Documentation is automatically available at:
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
 
 2. Start the Streamlit UI (in a separate terminal):
 ```bash
@@ -167,4 +171,4 @@ Delete an item:
 curl -X DELETE http://127.0.0.1:8000/items/1
 ```
 
-Note: While these API endpoints are still available for direct use, it's recommended to use the Streamlit UI for easier data management.
+Note: While these API endpoints are still available for direct use, it's recommended to use the Streamlit UI for easier data management. You can also explore the interactive API documentation at `/docs` or `/redoc` for a more detailed API reference.
