@@ -5,13 +5,13 @@ A RESTful API built with Flask that uses AWS DynamoDB as its backend database, n
 ## Project Structure
 
 ```
-├── app.py              # Flask API server
-├── Home.py            # Streamlit main dashboard
-├── pages/             # Streamlit pages for CRUD operations
+├── app.py                  # Flask API server
+├── Home.py                 # Streamlit main dashboard
+├── pages/                  # Streamlit pages for CRUD operations
 │   ├── 1_Edit_Item.py
 │   ├── 2_Add_Item.py
 │   └── 3_Delete_Item.py
-└── requirements.txt   # Project dependencies
+└── requirements.txt        # Project dependencies
 ```
 
 ## Setup
