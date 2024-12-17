@@ -12,11 +12,11 @@ COPY . .
 # Create logs directory
 RUN mkdir -p logs
 
-# Expose the ports for both FastAPI (8000) and Streamlit (8501)
-EXPOSE 8000 8501
+# Expose the port for FastAPI
+EXPOSE 8000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Command to run the application
-CMD ["streamlit", "run", "Home.py", "--server.address", "0.0.0.0"]
+# Command to run the FastAPI application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
