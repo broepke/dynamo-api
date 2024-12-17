@@ -10,7 +10,7 @@ st.title("Add New Item")
 st.markdown("Add a new item to the database")
 
 # Configure API URL
-API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
+API_URL = "http://127.0.0.1:8000"  # Update this if your Flask API is running on a different URL
 
 # Create a form for adding new items
 with st.form("add_item_form"):

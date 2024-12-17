@@ -10,7 +10,7 @@ st.title("Items Dashboard")
 st.markdown("View and manage items from the database")
 
 # Configure API URL
-API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
+API_URL = "http://127.0.0.1:8000"  # Update this if your Flask API is running on a different URL
 
 # Fetch items from API
 try:

@@ -38,7 +38,7 @@ export AWS_SECRET_ACCESS_KEY='your_secret_key'
 ```bash
 python app.py
 ```
-The API will be available at `http://127.0.0.1:5000`
+The API will be available at `http://127.0.0.1:8000`
 
 2. Start the Streamlit UI (in a separate terminal):
 ```bash
@@ -135,36 +135,36 @@ DELETE /items/<item_id>
 
 Create an item:
 ```bash
-curl -X POST http://127.0.0.1:5000/items \
+curl -X POST http://127.0.0.1:8000/items \
   -H "Content-Type: application/json" \
   -d '{"id": "1", "name": "Test Item", "description": "This is a test item"}'
 ```
 
 Get all items:
 ```bash
-curl http://127.0.0.1:5000/items
+curl http://127.0.0.1:8000/items
 ```
 
 Get a specific item:
 ```bash
-curl http://127.0.0.1:5000/items/1
+curl http://127.0.0.1:8000/items/1
 ```
 
 Get a specific property of an item:
 ```bash
-curl http://127.0.0.1:5000/items/1/name
+curl http://127.0.0.1:8000/items/1/name
 ```
 
 Update an item:
 ```bash
-curl -X PUT http://127.0.0.1:5000/items/1 \
+curl -X PUT http://127.0.0.1:8000/items/1 \
   -H "Content-Type: application/json" \
   -d '{"name": "Updated Item", "description": "This is an updated item"}'
 ```
 
 Delete an item:
 ```bash
-curl -X DELETE http://127.0.0.1:5000/items/1
+curl -X DELETE http://127.0.0.1:8000/items/1
 ```
 
 Note: While these API endpoints are still available for direct use, it's recommended to use the Streamlit UI for easier data management.

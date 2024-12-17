@@ -9,7 +9,7 @@ st.title("Edit Item")
 st.markdown("Edit an existing item in the database")
 
 # Configure API URL
-API_URL = "http://127.0.0.1:5000"  # Update this if your Flask API is running on a different URL
+API_URL = "http://127.0.0.1:8000"  # Update this if your Flask API is running on a different URL
 
 try:
     # Get all items from API

@@ -1,83 +1,98 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+from typing import Optional, Dict, Any, List
 import boto3
 from botocore.exceptions import ClientError
 import os
 
-app = Flask(__name__)
+app = FastAPI()
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource(
-    'dynamodb',
-    region_name='us-east-1',  # Change this to your preferred region
-    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-)
+# Pydantic model for items
+class Item(BaseModel):
+    id: str
+    # Making all other fields optional since DynamoDB is schema-less
+    additional_properties: Dict[str, Any] = {}
 
-# Sample table name - you'll need to create this table in DynamoDB
-TABLE_NAME = 'Items'
-table = dynamodb.Table(TABLE_NAME)
+    class Config:
+        extra = "allow"  # Allows additional fields
 
-@app.route('/items', methods=['GET'])
-def get_items():
+# DynamoDB client setup as a dependency
+def get_dynamodb():
+    dynamodb = boto3.resource(
+        'dynamodb',
+        region_name='us-east-1',  # Change this to your preferred region
+        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
+    )
+    return dynamodb.Table('Items')
+
+@app.get("/items", response_model=List[Dict[str, Any]])
+async def get_items(table: Any = Depends(get_dynamodb)):
     try:
         response = table.scan()
-        items = response.get('Items', [])
-        return jsonify(items)
+        return response.get('Items', [])
     except ClientError as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/items/<string:item_id>', methods=['GET'])
-def get_item(item_id):
-    try:
-        response = table.get_item(Key={'id': item_id})
-        item = response.get('Item')
-        if item:
-            return jsonify(item)
-        return jsonify({'error': 'Item not found'}), 404
-    except ClientError as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/items/<string:item_id>/<string:property_name>', methods=['GET'])
-def get_item_property(item_id, property_name):
+@app.get("/items/{item_id}")
+async def get_item(item_id: str, table: Any = Depends(get_dynamodb)):
     try:
         response = table.get_item(Key={'id': item_id})
         item = response.get('Item')
         if not item:
-            return jsonify({'error': 'Item not found'}), 404
+            raise HTTPException(status_code=404, detail="Item not found")
+        return item
+    except ClientError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/items/{item_id}/{property_name}")
+async def get_item_property(
+    item_id: str, 
+    property_name: str, 
+    table: Any = Depends(get_dynamodb)
+):
+    try:
+        response = table.get_item(Key={'id': item_id})
+        item = response.get('Item')
+        if not item:
+            raise HTTPException(status_code=404, detail="Item not found")
         
         if property_name not in item:
-            return jsonify({'error': f"Property '{property_name}' not found"}), 404
+            raise HTTPException(status_code=404, detail=f"Property '{property_name}' not found")
         
-        return jsonify({property_name: item[property_name]})
+        return {property_name: item[property_name]}
     except ClientError as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/items', methods=['POST'])
-def create_item():
+@app.post("/items", status_code=201)
+async def create_item(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
     try:
-        item = request.json
         table.put_item(Item=item)
-        return jsonify(item), 201
+        return item
     except ClientError as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/items/<string:item_id>', methods=['PUT'])
-def update_item(item_id):
+@app.put("/items/{item_id}")
+async def update_item(
+    item_id: str, 
+    item: Dict[str, Any], 
+    table: Any = Depends(get_dynamodb)
+):
     try:
-        item = request.json
         item['id'] = item_id
         table.put_item(Item=item)
-        return jsonify(item)
+        return item
     except ClientError as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/items/<string:item_id>', methods=['DELETE'])
-def delete_item(item_id):
+@app.delete("/items/{item_id}", status_code=204)
+async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
     try:
         table.delete_item(Key={'id': item_id})
-        return '', 204
+        return None
     except ClientError as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
