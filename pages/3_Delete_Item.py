@@ -48,7 +48,7 @@ try:
                     st.success("Item deleted successfully!")
                     
                     # Rerun the app to refresh the data
-                    st.rerun()
+                    # st.rerun()
                     
                 except requests.RequestException as e:
                     st.error(f"Error deleting item: {str(e)}")

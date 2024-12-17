@@ -40,7 +40,7 @@ with st.form("add_item_form"):
             st.success("Item added successfully!")
             
             # Clear the form by rerunning the app
-            st.rerun()
+            # st.rerun()
             
         except requests.RequestException as e:
             st.error(f"Error adding item: {str(e)}")

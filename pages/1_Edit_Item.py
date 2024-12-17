@@ -58,7 +58,7 @@ try:
                         st.success("Item updated successfully!")
                         
                         # Rerun the app to refresh the data
-                        st.rerun()
+                        # st.rerun()
                         
                     except requests.RequestException as e:
                         st.error(f"Error updating item: {str(e)}")
