@@ -21,7 +21,7 @@ try:
         st.warning("No items found in the database.")
     else:
         # Create a dropdown to select an item to delete
-        item_names = {f"{item['id']} - {item['name']}": item for item in items}
+        item_names = {f"{item['id']} - {item['NAME']}": item for item in items}
         selected_item_key = st.selectbox(
             "Select an item to delete",
             options=list(item_names.keys()),
@@ -34,8 +34,8 @@ try:
             # Display item details
             st.subheader("Item Details")
             st.text(f"ID: {selected_item['id']}")
-            st.text(f"Name: {selected_item['name']}")
-            st.text(f"Description: {selected_item['description']}")
+            st.text(f"Name: {selected_item['NAME']}")
+            st.text(f"Year: {selected_item['YEAR']}")
             
             # Add a delete confirmation
             st.warning("⚠️ Warning: This action cannot be undone!")

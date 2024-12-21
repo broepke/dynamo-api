@@ -56,7 +56,7 @@ def get_dynamodb():
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
         )
-        return dynamodb.Table("Items")
+        return dynamodb.Table("deadpool")
     except Exception as e:
         logger.exception(f"Failed to initialize DynamoDB connection: {str(e)}")
         raise
