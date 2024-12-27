@@ -188,9 +188,3 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
 
 # Create Lambda handler
 handler = Mangum(app)
-
-if __name__ == "__main__":
-    import uvicorn
-
-    logger.info("Starting Dynamo API server")
-    uvicorn.run(app, host="127.0.0.1", port=8000)
