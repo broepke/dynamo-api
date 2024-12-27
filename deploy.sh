@@ -21,7 +21,7 @@ cd package && zip -r ../lambda.zip . && cd ..
 
 # Cleanup
 deactivate
-rm -rf lvenv
+rm -rf lvenv package
 
 # Update Lambda function
 aws lambda update-function-code --function-name DynamoAPI --zip-file fileb://lambda.zip
