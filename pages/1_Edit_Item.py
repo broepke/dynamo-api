@@ -9,7 +9,7 @@ st.title("Edit Item")
 st.markdown("Edit an existing item in the database")
 
 # Configure API URL
-API_URL = "https://bse2pkr2m1.execute-api.us-east-1.amazonaws.com/default"  # Update this if your Flask API is running on a different URL
+API_URL = "https://api.dataknowsall.com"  # Update this if your Flask API is running on a different URL
 
 try:
     # Get all items from API
