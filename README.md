@@ -68,7 +68,7 @@ Ensure that your CLI is configured with a user that has access to the Table crea
 aws dynamodb put-item \
     --table-name Items \
     --item '{
-        "id": {"S": "1"},
+        "id": {"S": "edf49238-a6b4-4dca-9311-c46394ed1248"},
         "name": {"S": "Laptop"},
         "description": {"S": "High-performance gaming laptop with RTX 3080"}
     }' \
@@ -76,7 +76,7 @@ aws dynamodb put-item \
 aws dynamodb put-item \
     --table-name Items \
     --item '{
-        "id": {"S": "2"},
+        "id": {"S": "6ec6736f-ae36-4091-9cc0-1d8a98babee1"},
         "name": {"S": "Smartphone"},
         "description": {"S": "Latest model with 5G capability"}
     }' \
@@ -84,7 +84,7 @@ aws dynamodb put-item \
 aws dynamodb put-item \
     --table-name Items \
     --item '{
-        "id": {"S": "3"},
+        "id": {"S": "148e2229-8040-43ec-b9cc-36dd64bc503a"},
         "name": {"S": "Headphones"},
         "description": {"S": "Wireless noise-cancelling headphones"}
     }' \
