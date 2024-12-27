@@ -161,6 +161,7 @@ To use these test events:
 7. Click "Save" and "Test"
 
 ## API Endpoints
+**Note**: In order for the API gateway to work, each of the following Routes need to be added explicitly in the API Gateway console and attached to the Lambda function.
 
 - GET /items - List all items
 - GET /items/{item_id} - Get a specific item
@@ -182,5 +183,4 @@ Key dependencies (see requirements.txt for versions):
 - fastapi - Web framework
 - pydantic - Data validation
 - mangum - AWS Lambda/API Gateway integration
-- boto3 - AWS SDK
-- loguru - Logging
+- boto3 - AWS SDK (included in Lambda runtime)
