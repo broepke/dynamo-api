@@ -6,6 +6,7 @@ import boto3
 from botocore.exceptions import ClientError
 from loguru import logger
 import sys
+from mangum import Mangum
 
 # Configure Loguru
 log_directory = "logs"
@@ -184,6 +185,9 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
         logger.exception(f"Unexpected error while deleting item {item_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
+# Create Lambda handler
+handler = Mangum(app)
 
 if __name__ == "__main__":
     import uvicorn
