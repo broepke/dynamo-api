@@ -1,0 +1,35 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /items",
+  "rawPath": "/items",
+  "rawQueryString": "",
+  "headers": {
+    "accept": "*/*",
+    "content-length": "0",
+    "host": "your-api-id.execute-api.region.amazonaws.com",
+    "user-agent": "curl/7.64.1",
+    "x-amzn-trace-id": "Root=1-5e6722a7-cc56xmpl46db7ae02d4da47dd",
+    "x-forwarded-for": "1.2.3.4",
+    "x-forwarded-port": "443",
+    "x-forwarded-proto": "https"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "api-id",
+    "domainName": "your-api-id.execute-api.region.amazonaws.com",
+    "domainPrefix": "your-api-id",
+    "http": {
+      "method": "GET",
+      "path": "/items",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "1.2.3.4",
+      "userAgent": "curl/7.64.1"
+    },
+    "requestId": "JKJaXmPLvHcESHA=",
+    "routeKey": "GET /items",
+    "stage": "$default",
+    "time": "10/Mar/2024:13:40:52 +0000",
+    "timeEpoch": 1583856052000
+  },
+  "isBase64Encoded": false
+}

@@ -9,7 +9,8 @@ import sys
 from mangum import Mangum
 
 # Configure Loguru
-log_directory = "logs"
+# Use /tmp directory for Lambda environment
+log_directory = "/tmp/logs"
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
 
@@ -24,7 +25,7 @@ logger.add(
     level="INFO",
 )
 
-# Add file logging with rotation
+# Add file logging with rotation in /tmp
 logger.add(
     os.path.join(log_directory, "dynamo-api.log"),
     rotation="10 MB",
@@ -51,11 +52,10 @@ class Item(BaseModel):
 def get_dynamodb():
     logger.info("Initializing DynamoDB connection")
     try:
+        # Let Lambda use its IAM role
         dynamodb = boto3.resource(
             "dynamodb",
-            region_name=os.environ.get("AWS_REGION", "us-east-1"),
-            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            region_name=os.environ.get("AWS_REGION", "us-east-1")
         )
         return dynamodb.Table("Items")
     except Exception as e:
@@ -186,5 +186,8 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-# Create Lambda handler
-handler = Mangum(app)
+# Create Lambda handler with API Gateway v2 configuration
+handler = Mangum(app, api_gateway_base_path="/", lifespan="off")
+
+# Export the handler as lambda_handler for AWS Lambda
+lambda_handler = handler
