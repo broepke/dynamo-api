@@ -21,6 +21,7 @@ try:
     if items:
         # Convert items to DataFrame
         df = pd.DataFrame(items)
+        df = df[["id", "name", "description"]]
         # Display items in a table
         st.dataframe(df, use_container_width=True)
     else:
