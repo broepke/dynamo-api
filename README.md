@@ -15,7 +15,7 @@ A FastAPI-based Lambda function that provides a RESTful API interface to DynamoD
 1. Clone the repository
 2. Install dependencies locally (if needed):
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements_local.txt
    ```
 3. Make the deploy script executable:
    ```bash
