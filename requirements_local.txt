@@ -1,9 +1,7 @@
 fastapi
-uvicorn
 boto3
 streamlit
 requests
 pandas
 pydantic
-loguru
 mangum
