@@ -17,13 +17,9 @@ A FastAPI-based Lambda function that provides a RESTful API interface to DynamoD
    ```bash
    pip install -r requirements_local.txt
    ```
-3. Make the deploy script executable:
+3. Deploy to AWS Lambda:
    ```bash
-   chmod +x deploy.sh
-   ```
-4. Deploy to AWS Lambda:
-   ```bash
-   ./deploy.sh
+   sh deploy.sh
    ```
 
 The deploy script will:
