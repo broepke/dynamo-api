@@ -1,5 +1,5 @@
 import logging
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from pydantic import BaseModel
 from typing import Dict, Any, List
 import boto3
@@ -19,6 +19,8 @@ logger.addHandler(handler)
 
 app = FastAPI()
 
+# Create v1 router
+v1_router = APIRouter(prefix="/v1")
 
 @app.get("/")
 async def root():
@@ -59,6 +61,7 @@ def get_dynamodb():
         raise
 
 
+# Original routes
 @app.get("/items", response_model=List[Dict[str, Any]])
 async def get_items(table: Any = Depends(get_dynamodb)):
     logger.info("Handling GET request for all items")
@@ -198,6 +201,34 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
         )
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
+# V1 routes
+@v1_router.get("/items", response_model=List[Dict[str, Any]])
+async def get_items_v1(table: Any = Depends(get_dynamodb)):
+    return await get_items(table)
+
+@v1_router.get("/items/{item_id}")
+async def get_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
+    return await get_item(item_id, table)
+
+@v1_router.get("/items/{item_id}/{property_name}")
+async def get_item_property_v1(item_id: str, property_name: str, table: Any = Depends(get_dynamodb)):
+    return await get_item_property(item_id, property_name, table)
+
+@v1_router.post("/items", status_code=201)
+async def create_item_v1(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
+    return await create_item(item, table)
+
+@v1_router.put("/items/{item_id}")
+async def update_item_v1(item_id: str, item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
+    return await update_item(item_id, item, table)
+
+@v1_router.delete("/items/{item_id}", status_code=204)
+async def delete_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
+    return await delete_item(item_id, table)
+
+# Include v1 router in the main app
+app.include_router(v1_router)
 
 # Create Lambda handler with API Gateway v2 configuration
 handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
