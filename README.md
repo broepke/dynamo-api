@@ -14,15 +14,19 @@ A FastAPI-based Lambda function that provides a RESTful API interface to DynamoD
 
 1. Clone the repository
 2. Install dependencies locally (if needed):
+
    ```bash
    pip install -r requirements_local.txt
    ```
+
 3. Deploy to AWS Lambda:
+
    ```bash
    sh deploy.sh
    ```
 
 The deploy script will:
+
 - Create a clean package directory
 - Install dependencies
 - Package the Lambda function with dependencies
@@ -34,25 +38,26 @@ The Lambda function needs permissions to access DynamoDB. Add this inline policy
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:GetItem",
-                "dynamodb:PutItem",
-                "dynamodb:DeleteItem",
-                "dynamodb:Scan",
-                "dynamodb:Query",
-                "dynamodb:UpdateItem"
-            ],
-            "Resource": "arn:aws:dynamodb:*:*:table/Items"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Scan",
+        "dynamodb:Query",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "arn:aws:dynamodb:*:*:table/Items"
+    }
+  ]
 }
 ```
 
 To add the policy:
+
 1. Go to AWS Lambda console
 2. Click on your function
 3. Go to "Configuration" > "Permissions"
@@ -68,6 +73,7 @@ To add the policy:
 The function can be tested using API Gateway v2 formatted test events. Here are examples for different operations:
 
 #### GET All Items
+
 ```json
 {
   "version": "2.0",
@@ -107,6 +113,7 @@ The function can be tested using API Gateway v2 formatted test events. Here are 
 ```
 
 #### POST New Item
+
 ```json
 {
   "version": "2.0",
@@ -148,6 +155,7 @@ The function can be tested using API Gateway v2 formatted test events. Here are 
 ```
 
 To use these test events:
+
 1. Go to AWS Lambda console
 2. Select your function
 3. Click the "Test" tab
@@ -157,6 +165,7 @@ To use these test events:
 7. Click "Save" and "Test"
 
 ## API Endpoints
+
 **Note**: In order for the API gateway to work, each of the following Routes need to be added explicitly in the API Gateway console and attached to the Lambda function.
 
 - GET /items - List all items
@@ -169,6 +178,7 @@ To use these test events:
 ## Logging
 
 The function uses Loguru for logging, configured to:
+
 - Write logs to CloudWatch
 - Store rotating logs in /tmp/logs (Lambda's writable directory)
 - Include timestamps, log levels, and detailed context
@@ -176,6 +186,7 @@ The function uses Loguru for logging, configured to:
 ## Dependencies
 
 Key dependencies (see requirements.txt for versions):
+
 - fastapi - Web framework
 - pydantic - Data validation
 - mangum - AWS Lambda/API Gateway integration
