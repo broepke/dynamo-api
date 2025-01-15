@@ -1,7 +1,7 @@
 import logging
 import json
 import base64
-from fastapi import FastAPI, HTTPException, Depends, APIRouter
+from fastapi import FastAPI, HTTPException, Depends, APIRouter, Query
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import boto3
@@ -211,9 +211,24 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
 
 
 # V1 routes
-@v1_router.get("/items", response_model=PaginatedResponse)
+@v1_router.get(
+    "/items",
+    response_model=PaginatedResponse,
+    summary="Retrieve paginated list of items",
+    description="""
+Fetch a paginated list of items from the DynamoDB table.
+- Use the `limit` parameter to specify the number of items to fetch.
+- Use the `cursor` parameter for pagination, to fetch the next set of items.
+""",
+)
 async def get_items_v1(
-    limit: int = 10, cursor: Optional[str] = None, table: Any = Depends(get_dynamodb)
+    limit: int = Query(
+        10, ge=1, le=100, description="Number of items to fetch (1-100)"
+    ),
+    cursor: Optional[str] = Query(
+        None, description="Pagination cursor for fetching the next set of items"
+    ),
+    table: Any = Depends(get_dynamodb),
 ):
     logger.info(
         f"Handling GET request for items with limit {limit} and cursor {cursor}"
