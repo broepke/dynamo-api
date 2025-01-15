@@ -166,7 +166,9 @@ To use these test events:
 
 ## API Endpoints
 
-**Note**: In order for the API gateway to work, each of the following Routes need to be added explicitly in the API Gateway console and attached to the Lambda function.
+The API supports both unversioned (default) and versioned endpoints. You can access the same functionality through either version:
+
+### Unversioned Endpoints (Default)
 
 - GET /items - List all items
 - GET /items/{item_id} - Get a specific item
@@ -174,6 +176,19 @@ To use these test events:
 - POST /items - Create a new item
 - PUT /items/{item_id} - Update an item
 - DELETE /items/{item_id} - Delete an item
+
+### V1 Endpoints
+
+The same endpoints are available with a "/v1" prefix:
+
+- GET /v1/items - List all items
+- GET /v1/items/{item_id} - Get a specific item
+- GET /v1/items/{item_id}/{property_name} - Get a specific property of an item
+- POST /v1/items - Create a new item
+- PUT /v1/items/{item_id} - Update an item
+- DELETE /v1/items/{item_id} - Delete an item
+
+**Note**: In order for the API gateway to work, each of these routes (both unversioned and v1) needs to be added explicitly in the API Gateway console and attached to the Lambda function.
 
 ## Logging
 
