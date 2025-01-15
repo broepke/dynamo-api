@@ -1,4 +1,6 @@
 import logging
+import json
+import base64
 from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
@@ -220,9 +222,6 @@ async def get_items_v1(
         scan_kwargs = {"Limit": limit}
 
         if cursor:
-            import json
-            import base64
-
             try:
                 last_evaluated_key = json.loads(
                     base64.b64decode(cursor.encode()).decode()
@@ -284,4 +283,7 @@ async def delete_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
 app.include_router(v1_router)
 
 # Create Lambda handler with API Gateway v2 configuration
-lambda_handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
+handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
+
+# Export the handler as lambda_handler for AWS Lambda
+lambda_handler = handler

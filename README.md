@@ -179,9 +179,34 @@ The API supports both unversioned (default) and versioned endpoints. You can acc
 
 ### V1 Endpoints
 
-The same endpoints are available with a "/v1" prefix:
+The v1 API introduces pagination for the items endpoint while maintaining the same functionality for other endpoints:
 
-- GET /v1/items - List all items
+#### GET /v1/items (with pagination)
+
+```json
+# Get first page
+GET /v1/items?limit=5
+
+Response:
+{
+    "items": [...],
+    "next_cursor": "base64_encoded_cursor"
+}
+
+# Get next page using the cursor
+GET /v1/items?limit=5&cursor=<next_cursor>
+
+Response:
+{
+    "items": [...],
+    "next_cursor": "base64_encoded_cursor_or_null"
+}
+```
+
+Note: When next_cursor is null, there are no more items to retrieve.
+
+Other v1 endpoints remain unchanged:
+
 - GET /v1/items/{item_id} - Get a specific item
 - GET /v1/items/{item_id}/{property_name} - Get a specific property of an item
 - POST /v1/items - Create a new item
