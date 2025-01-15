@@ -183,7 +183,7 @@ The v1 API introduces pagination for the items endpoint while maintaining the sa
 
 #### GET /v1/items (with pagination)
 
-```json
+```text
 # Get first page
 GET /v1/items?limit=5
 
