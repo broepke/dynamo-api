@@ -10,7 +10,7 @@ if 'cursor' not in st.session_state:
     st.session_state.cursor = None
 
 # Configure API URL
-API_URL = "https://api.dataknowsall.com"
+API_URL = "https://dynamo-api.dataknowsall.com"
 
 # Sidebar controls
 with st.sidebar:

@@ -10,7 +10,7 @@ st.title("Add New Item")
 st.markdown("Add a new item to the database")
 
 # Configure API URL
-API_URL = "https://api.dataknowsall.com"  # Update this if your Flask API is running on a different URL
+API_URL = "https://dynamo-api.dataknowsall.com"  # Update this if your Flask API is running on a different URL
 
 # Create a form for adding new items
 with st.form("add_item_form"):
