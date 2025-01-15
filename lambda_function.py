@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import boto3
 from botocore.exceptions import ClientError
 from mangum import Mangum
@@ -37,7 +37,7 @@ async def health():
     return {"status": "healthy"}
 
 
-# Pydantic model for items
+# Pydantic models
 class Item(BaseModel):
     id: str
     # Making all other fields optional since DynamoDB is schema-less
@@ -45,6 +45,10 @@ class Item(BaseModel):
 
     class Config:
         extra = "allow"  # Allows additional fields
+
+class PaginatedResponse(BaseModel):
+    items: List[Dict[str, Any]]
+    next_cursor: Optional[str] = None
 
 
 # DynamoDB client setup as a dependency
@@ -203,9 +207,48 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
 
 
 # V1 routes
-@v1_router.get("/items", response_model=List[Dict[str, Any]])
-async def get_items_v1(table: Any = Depends(get_dynamodb)):
-    return await get_items(table)
+@v1_router.get("/items", response_model=PaginatedResponse)
+async def get_items_v1(
+    limit: int = 10,
+    cursor: Optional[str] = None,
+    table: Any = Depends(get_dynamodb)
+):
+    logger.info(f"Handling GET request for items with limit {limit} and cursor {cursor}")
+    try:
+        scan_kwargs = {
+            "Limit": limit
+        }
+        
+        if cursor:
+            import json
+            import base64
+            try:
+                last_evaluated_key = json.loads(base64.b64decode(cursor.encode()).decode())
+                scan_kwargs["ExclusiveStartKey"] = last_evaluated_key
+            except Exception as e:
+                logger.error(f"Invalid cursor format: {str(e)}")
+                raise HTTPException(status_code=400, detail="Invalid cursor format")
+
+        response = table.scan(**scan_kwargs)
+        items = response.get("Items", [])
+        
+        next_cursor = None
+        if "LastEvaluatedKey" in response:
+            next_cursor = base64.b64encode(
+                json.dumps(response["LastEvaluatedKey"]).encode()
+            ).decode()
+
+        logger.info(f"Successfully retrieved {len(items)} items")
+        return PaginatedResponse(
+            items=items,
+            next_cursor=next_cursor
+        )
+    except ClientError as e:
+        logger.error(f"DynamoDB error while fetching items: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(f"Unexpected error while fetching items: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @v1_router.get("/items/{item_id}")
 async def get_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
