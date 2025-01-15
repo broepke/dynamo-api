@@ -22,6 +22,7 @@ app = FastAPI()
 # Create v1 router
 v1_router = APIRouter(prefix="/v1")
 
+
 @app.get("/")
 async def root():
     logger.info("Root path accessed")
@@ -45,6 +46,7 @@ class Item(BaseModel):
 
     class Config:
         extra = "allow"  # Allows additional fields
+
 
 class PaginatedResponse(BaseModel):
     items: List[Dict[str, Any]]
@@ -209,21 +211,22 @@ async def delete_item(item_id: str, table: Any = Depends(get_dynamodb)):
 # V1 routes
 @v1_router.get("/items", response_model=PaginatedResponse)
 async def get_items_v1(
-    limit: int = 10,
-    cursor: Optional[str] = None,
-    table: Any = Depends(get_dynamodb)
+    limit: int = 10, cursor: Optional[str] = None, table: Any = Depends(get_dynamodb)
 ):
-    logger.info(f"Handling GET request for items with limit {limit} and cursor {cursor}")
+    logger.info(
+        f"Handling GET request for items with limit {limit} and cursor {cursor}"
+    )
     try:
-        scan_kwargs = {
-            "Limit": limit
-        }
-        
+        scan_kwargs = {"Limit": limit}
+
         if cursor:
             import json
             import base64
+
             try:
-                last_evaluated_key = json.loads(base64.b64decode(cursor.encode()).decode())
+                last_evaluated_key = json.loads(
+                    base64.b64decode(cursor.encode()).decode()
+                )
                 scan_kwargs["ExclusiveStartKey"] = last_evaluated_key
             except Exception as e:
                 logger.error(f"Invalid cursor format: {str(e)}")
@@ -231,7 +234,7 @@ async def get_items_v1(
 
         response = table.scan(**scan_kwargs)
         items = response.get("Items", [])
-        
+
         next_cursor = None
         if "LastEvaluatedKey" in response:
             next_cursor = base64.b64encode(
@@ -239,10 +242,7 @@ async def get_items_v1(
             ).decode()
 
         logger.info(f"Successfully retrieved {len(items)} items")
-        return PaginatedResponse(
-            items=items,
-            next_cursor=next_cursor
-        )
+        return PaginatedResponse(items=items, next_cursor=next_cursor)
     except ClientError as e:
         logger.error(f"DynamoDB error while fetching items: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
@@ -250,31 +250,38 @@ async def get_items_v1(
         logger.error(f"Unexpected error while fetching items: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @v1_router.get("/items/{item_id}")
 async def get_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
     return await get_item(item_id, table)
 
+
 @v1_router.get("/items/{item_id}/{property_name}")
-async def get_item_property_v1(item_id: str, property_name: str, table: Any = Depends(get_dynamodb)):
+async def get_item_property_v1(
+    item_id: str, property_name: str, table: Any = Depends(get_dynamodb)
+):
     return await get_item_property(item_id, property_name, table)
+
 
 @v1_router.post("/items", status_code=201)
 async def create_item_v1(item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
     return await create_item(item, table)
 
+
 @v1_router.put("/items/{item_id}")
-async def update_item_v1(item_id: str, item: Dict[str, Any], table: Any = Depends(get_dynamodb)):
+async def update_item_v1(
+    item_id: str, item: Dict[str, Any], table: Any = Depends(get_dynamodb)
+):
     return await update_item(item_id, item, table)
+
 
 @v1_router.delete("/items/{item_id}", status_code=204)
 async def delete_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
     return await delete_item(item_id, table)
 
+
 # Include v1 router in the main app
 app.include_router(v1_router)
 
 # Create Lambda handler with API Gateway v2 configuration
-handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
-
-# Export the handler as lambda_handler for AWS Lambda
-lambda_handler = handler
+lambda_handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
