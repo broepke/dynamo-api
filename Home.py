@@ -29,8 +29,8 @@ with st.sidebar:
         limit = st.number_input(
             "Items per request",
             min_value=1,
-            max_value=100,
-            value=10,
+            max_value=25,
+            value=4,
             help="Number of items to fetch per request (V1 API only)"
         )
 
