@@ -298,7 +298,4 @@ async def delete_item_v1(item_id: str, table: Any = Depends(get_dynamodb)):
 app.include_router(v1_router)
 
 # Create Lambda handler with API Gateway v2 configuration
-handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
-
-# Export the handler as lambda_handler for AWS Lambda
-lambda_handler = handler
+lambda_handler = Mangum(app, lifespan="off", api_gateway_base_path="/default")
